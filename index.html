@@ -83,31 +83,46 @@
 
   /* ---------- DAY TABS ---------- */
   .days{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px 16px 0}
-  .day{border-radius:11px;padding:9px 2px 8px;background:var(--ink-2);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .12s}
+  .day{border-radius:11px;padding:9px 2px 8px;background:var(--ink-2);border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .12s;position:relative}
   .day:active{transform:scale(.95)}
   .day .dnum{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;line-height:1}
   .day .dlab{font-size:9px;line-height:1.05;color:var(--muted);text-transform:uppercase;letter-spacing:.02em;text-align:center}
   .day.on{background:var(--text);border-color:transparent}
   .day.on .dnum{color:var(--ink)} .day.on .dlab{color:var(--ink);opacity:.75}
+  .day.fin::after{content:'\2713';position:absolute;top:5px;right:7px;font-size:9px;font-weight:700;color:var(--core)}
+  .day.on.fin::after{color:#9be3b8}
 
   /* ---------- CONTENT ---------- */
   main{padding:16px}
   .card{background:var(--ink-2);border:1px solid var(--line);border-radius:20px;padding:16px 16px 8px;box-shadow:0 1px 0 rgba(0,0,0,.02);border-top:4px solid var(--cyc,var(--amber))}
   .card + .card{margin-top:14px}
-  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px}
   .card-head .ttl{font-weight:900;text-transform:uppercase;font-size:24px;line-height:1;letter-spacing:-.01em}
   .card-head .sub{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-top:7px}
   .phase{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 9px;border-radius:8px;white-space:nowrap;color:#fff;background:var(--cyc)}
+  .progress{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);display:flex;align-items:center;justify-content:space-between;margin:12px 2px 6px}
+  .progress .ok{color:#2E7D4F;font-weight:700}
+  .progress .reset{color:var(--amber-ink);font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:4px 0}
 
-  .row{display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 4px;border-top:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:14px 1fr auto;align-items:center;gap:12px;width:100%;text-align:left;padding:13px 4px;border-top:1px solid var(--line);transition:opacity .15s}
   .row:first-of-type{border-top:none}
   .row .bar{width:5px;height:34px;border-radius:3px;align-self:center}
   .bar.P{background:var(--push)} .bar.L{background:var(--legs)} .bar.U{background:var(--pull)} .bar.C{background:var(--core)} .bar.K{background:var(--amber)}
   .row .mid{min-width:0}
   .row .cat{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:2px}
   .row .nm{font-size:15px;font-weight:600;line-height:1.2}
-  .row .reps{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:17px;color:var(--amber-ink);white-space:nowrap}
+  .row .reps{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:17px;color:var(--amber-ink);white-space:nowrap;display:flex;align-items:center;gap:9px}
+  .row .tick{width:24px;height:24px;border-radius:50%;border:2px solid var(--line-2);display:flex;align-items:center;justify-content:center;color:transparent;font-size:13px;transition:.15s;flex:0 0 auto}
+  .row.done{opacity:.46}
+  .row.done .nm{text-decoration:line-through;text-decoration-color:var(--faint)}
+  .row.done .tick{background:var(--core);border-color:var(--core);color:#0c2a1c}
+  .row:active{background:rgba(0,0,0,.02)}
+  .row.static{cursor:default}
+  .row.static:active{background:transparent}
   .cardio-row .reps{font-size:13px;letter-spacing:.02em}
+
+  .card.complete{background:#E9F3EC;border-color:#C4E0CD;border-top:4px solid var(--core)!important}
+  .card.complete .phase{background:var(--core)}
 
   /* ---------- HOW IT WORKS ---------- */
   details.info{margin:16px 0 0;background:var(--ink-2);border:1px solid var(--line);border-radius:16px;overflow:hidden}
@@ -177,6 +192,7 @@
       <p><b>16 min EMOM — 4 rounds, one minute each: Push &#8594; Legs &#8594; Pull &#8594; Core.</b> On the minute, do the listed work, then rest the rest of the minute. Every exercise lands four times across the 16 min. Keep 2&#8211;3 reps in reserve.</p>
       <p><span class="mono">3&#215;10s</span> = three holds inside the minute. <span class="mono">45s</span> = accumulate across the minute.</p>
       <p><b>Cardio first, every day</b> — pick by time / space / weather: a <b>3&#8211;5K run</b> or <b>10 min HIIT jump-rope</b>.</p>
+      <p><b>Tap any line to check it off</b> — the card turns green when all five are done, and the day tab gets a tick. Your progress is saved on this device. Travel workouts are reference only.</p>
       <p><b>Weeks follow the calendar.</b> Week 1 begins 22 Jun 2026; the app opens on the current week automatically. Days (1&#8211;5) are yours to place on whichever working days that week allows.</p>
     </div>
   </details>
@@ -234,6 +250,7 @@ const CARDIO='Run 3\u20135K \u00B7 Rope 10\u2032 HIIT';
 const CYC=[{n:'Foundation',v:'--c1'},{n:'Build',v:'--c2'},{n:'Intensify',v:'--c3'},{n:'Peak',v:'--c4'}];
 const PHASE=['Base','Build','Peak'];
 const CATS=[['P','Push'],['L','Legs'],['U','Pull'],['C','Core']];
+const ALLKEYS=['K','P','L','U','C'];
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 /* ---------- DATES ---------- */
@@ -249,10 +266,17 @@ function currentWeek(){
   return Math.min(12,Math.max(1,n));
 }
 
-/* ---------- STATE (no persistence needed) ---------- */
+/* ---------- STORAGE (safe; persists on a hosted URL) ---------- */
+const store={
+  get:function(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+  set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+
+/* ---------- STATE ---------- */
 let mode='program';
 let week=currentWeek();
 let day=1;
+let done=store.get('tp.done',{});   // { "week-day": {K:true,P:true,...} }
 
 /* ---------- BUILD NAV ---------- */
 const weeksEl=document.getElementById('weeks');
@@ -273,15 +297,24 @@ for(let d=1;d<=5;d++){
   b.onclick=function(){day=d;renderNav();renderWorkout();};
   dayTabsEl.appendChild(b);
 }
+function dayComplete(w,d){const s=done[w+'-'+d]||{};return ALLKEYS.every(function(k){return s[k];});}
+function markDayTabs(){document.querySelectorAll('.day').forEach(function(el){el.classList.toggle('fin',dayComplete(week,+el.dataset.d));});}
 function renderNav(){
   document.querySelectorAll('.wk').forEach(function(el){
     const on=+el.dataset.w===week;el.classList.toggle('on',on);
     if(on)requestAnimationFrame(function(){el.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});});
   });
   document.querySelectorAll('.day').forEach(function(el){el.classList.toggle('on',+el.dataset.d===day);});
+  markDayTabs();
 }
 
-/* ---------- ROW (display only) ---------- */
+/* ---------- ROW BUILDERS ---------- */
+function row(catKey,catLabel,name,reps,isDone){
+  return '<button class="row '+(isDone?'done':'')+'" data-cat="'+catKey+'">'+
+    '<span class="bar '+catKey+'"></span>'+
+    '<span class="mid"><span class="cat">'+catLabel+'</span><span class="nm">'+name+'</span></span>'+
+    '<span class="reps">'+reps+'<span class="tick">\u2713</span></span></button>';
+}
 function srow(catKey,catLabel,name,reps,extra){
   return '<div class="row '+(extra||'')+'">'+
     '<span class="bar '+catKey+'"></span>'+
@@ -289,26 +322,37 @@ function srow(catKey,catLabel,name,reps,extra){
     '<span class="reps">'+reps+'</span></div>';
 }
 
-/* ---------- WORKOUT ---------- */
+/* ---------- WORKOUT (program, trackable) ---------- */
 function renderWorkout(){
   const cyc=Math.floor((week-1)/3), wic=(week-1)%3;
   const src=days[day].cycles[cyc];
-  let rows=srow('K','Cardio',CARDIO,'choose','cardio-row');
-  CATS.forEach(function(p){rows+=srow(p[0],p[1],src[p[0]][0],src[p[0]][1][wic]);});
+  const key=week+'-'+day;
+  const state=done[key]||{};
+  let rows=row('K','Cardio',CARDIO,'choose',!!state.K).replace('class="row','class="row cardio-row');
+  CATS.forEach(function(p){rows+=row(p[0],p[1],src[p[0]][0],src[p[0]][1][wic],!!state[p[0]]);});
+  const doneCount=ALLKEYS.filter(function(k){return state[k];}).length;
+  const complete=doneCount===5;
   document.getElementById('workout').innerHTML=
-    '<div class="card" style="--cyc:var('+CYC[cyc].v+')">'+
-      '<div class="card-head">'+
-        '<div><div class="ttl">'+days[day].title+'</div>'+
+    '<div class="card '+(complete?'complete':'')+'" style="--cyc:var('+CYC[cyc].v+')">'+
+      '<div class="card-head"><div>'+
+        '<div class="ttl">'+days[day].title+'</div>'+
         '<div class="sub">Week '+week+' \u00B7 '+range(week)+'</div></div>'+
         '<span class="phase">Cycle '+(cyc+1)+' \u00B7 '+PHASE[wic]+'</span>'+
-      '</div>'+rows+'</div>';
+      '</div>'+
+      '<div class="progress"><span class="'+(complete?'ok':'')+'">'+(complete?'\u2713 Session complete':doneCount+'/5 done')+'</span><button class="reset" id="reset">Reset day</button></div>'+
+      rows+'</div>';
+  document.querySelectorAll('#workout .row').forEach(function(r){
+    r.onclick=function(){const c=r.dataset.cat;state[c]=!state[c];done[key]=state;store.set('tp.done',done);renderWorkout();};
+  });
+  document.getElementById('reset').onclick=function(e){e.stopPropagation();done[key]={};store.set('tp.done',done);renderWorkout();};
+  markDayTabs();
 }
 
-/* ---------- TRAVEL ---------- */
+/* ---------- TRAVEL (reference only) ---------- */
 function renderTravel(){
   document.getElementById('travelCards').innerHTML=travel.map(function(w){
-    let rows=srow('K','Cardio',CARDIO,'choose','cardio-row');
-    CATS.forEach(function(p){rows+=srow(p[0],p[1],w[p[0]][0],w[p[0]][1]);});
+    let rows=srow('K','Cardio',CARDIO,'choose','static cardio-row');
+    CATS.forEach(function(p){rows+=srow(p[0],p[1],w[p[0]][0],w[p[0]][1],'static');});
     return '<div class="card" style="--cyc:var(--amber)">'+
       '<div class="card-head"><div><div class="ttl">Workout '+w.n+'</div>'+
       '<div class="sub">'+w.t+' \u00B7 16 min EMOM</div></div></div>'+rows+'</div>';
