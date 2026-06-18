@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<title>Training Program</title>
+<title>Training &amp; Health</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -18,6 +18,8 @@
     --legs:#A6D6A8;   --legs-t:#2C7A4F;
     --pull:#9AD0DA;   --pull-t:#237E8C;
     --core:#B9B4E8;   --core-t:#5754B0;
+    --water:#9AD0DA; --water-t:#237E8C;
+    --sleep:#B9B4E8; --sleep-t:#5754B0;
     --c1:#4A86C2; --c2:#2F6AA8; --c3:#1C4E8B; --c4:#0C3568;
     --green:#34C759; --green-bg:#E8F8EC; --green-bd:#C4E0CD; --green-tx:#1B7A33;
     --sf:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display',system-ui,'Segoe UI',Roboto,sans-serif;
@@ -102,6 +104,25 @@
   .note{margin-top:14px;padding:14px 15px;background:var(--card);border:1px solid var(--sep);border-radius:14px;font-size:13px;color:var(--label2);line-height:1.5}
   .note b{color:var(--label)}
   .foot{margin:22px 4px 0;font-size:11.5px;color:var(--label3);line-height:1.5;text-align:center}
+  .hcard{margin-bottom:14px}
+  .ch{font-size:12px;font-weight:600;color:var(--label2);text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px}
+  .irow{display:flex;align-items:center;gap:12px;padding:13px 2px;position:relative}
+  .irow + .irow::before{content:'';position:absolute;left:19px;right:0;top:0;height:.5px;background:var(--sep)}
+  .iname{flex:1;font-size:15px;font-weight:500;color:var(--label)}
+  .iname .iu{font-size:11px;font-weight:600;color:var(--label2);margin-left:7px;letter-spacing:.04em}
+  .field{display:inline-flex;align-items:baseline;gap:3px;background:var(--bg);border-radius:9px;padding:7px 11px}
+  .numfield{width:54px;text-align:right;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;border:0;background:transparent;color:var(--label);padding:0;-moz-appearance:textfield;outline:none}
+  .numfield::-webkit-outer-spin-button,.numfield::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .fu{font-size:12px;font-weight:600;color:var(--label2)}
+  .legend{display:flex;gap:16px;margin:2px 0 8px;font-size:12px;color:var(--label2)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:14px;height:3px;border-radius:2px;display:inline-block}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .metric{background:var(--card);border:1px solid var(--sep);border-radius:14px;padding:11px 13px}
+  .metric .ml{font-size:12px;color:var(--label2)}
+  .metric .mv{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:2px;color:var(--label)}
+  .metric .mv span{font-size:13px;color:var(--label2);font-weight:600}
+  .hempty{padding:24px 4px;text-align:center;color:var(--label2);font-size:13px}
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
   @media (min-width:560px){body{max-width:520px;margin:0 auto}}
@@ -110,8 +131,8 @@
 <body>
 
 <header class="top">
-  <div class="brand"><h1>Training</h1><span class="kick">Morning</span></div>
-  <div class="seg" id="seg"><button data-mode="program" class="on">Program</button><button data-mode="travel">Travel</button></div>
+  <div class="brand"><h1>Training &amp; Health</h1><span class="kick">Morning</span></div>
+  <div class="seg" id="seg"><button data-mode="program" class="on">Program</button><button data-mode="travel">Travel</button><button data-mode="health">Health</button></div>
 </header>
 
 <section id="view-program">
@@ -132,7 +153,11 @@
   </main>
 </section>
 
-<main>
+<section id="view-health" hidden>
+  <main><div id="healthView"></div></main>
+</section>
+
+<main id="extra">
   <details class="info">
     <summary>How a session runs <span class="chev">&#9662;</span></summary>
     <div class="info-body">
@@ -203,6 +228,7 @@ function currentWeek(){const t=new Date();t.setHours(0,0,0,0);const s=new Date(S
 
 const store={get:function(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 let mode='program', week=currentWeek(), day=1, done=store.get('tp.done',{});
+let health=store.get('tp.health',{});
 
 const weeksEl=document.getElementById('weeks');
 for(let w=1;w<=12;w++){
@@ -271,10 +297,70 @@ function renderTravel(){
 }
 
 const segEl=document.getElementById('seg');
-function applyMode(){segEl.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===mode);});document.getElementById('view-program').hidden=mode!=='program';document.getElementById('view-travel').hidden=mode!=='travel';}
+
+function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmtToday(){var d=new Date();return d.getDate()+' '+MON[d.getMonth()];}
+function num(v){return typeof v==='number'&&isFinite(v);}
+function avg(a){return a.length?a.reduce(function(x,y){return x+y;},0)/a.length:null;}
+
+function healthChart(tl){
+  var W=300,H=180,padL=24,padR=28,padT=12,padB=24,n=tl.length,ph=H-padT-padB,wMax=4,sMax=10;
+  var css=function(k){return getComputedStyle(document.documentElement).getPropertyValue(k).trim();};
+  var x=function(i){return n>1?padL+i*((W-padL-padR)/(n-1)):(padL+(W-padR))/2;};
+  var yW=function(v){return padT+(1-Math.min(v,wMax)/wMax)*ph;};
+  var yS=function(v){return padT+(1-Math.min(v,sMax)/sMax)*ph;};
+  var sf=css('--sf'),sep=css('--sep'),wt=css('--water-t'),st=css('--sleep-t'),l2=css('--label2');
+  var g='';
+  for(var j=0;j<=4;j++){var y=padT+j/4*ph;
+    g+='<line x1="'+padL+'" y1="'+y.toFixed(1)+'" x2="'+(W-padR)+'" y2="'+y.toFixed(1)+'" stroke="'+sep+'" stroke-width="1"/>';
+    g+='<text x="'+(padL-6)+'" y="'+(y+3).toFixed(1)+'" text-anchor="end" font-size="8.5" fill="'+wt+'" font-family="'+sf+'">'+(4-j)+'</text>';
+    g+='<text x="'+(W-padR+6)+'" y="'+(y+3).toFixed(1)+'" text-anchor="start" font-size="8.5" fill="'+st+'" font-family="'+sf+'">'+(10-2.5*j)+'</text>';
+  }
+  var pathFor=function(key,yf){var d='',pen=false;tl.forEach(function(e,i){var v=e[key];if(!num(v)){pen=false;return;}d+=(pen?'L':'M')+x(i).toFixed(1)+' '+yf(v).toFixed(1)+' ';pen=true;});return d.trim();};
+  if(tl.every(function(e){return num(e.w);})&&n>1){var a='M'+x(0).toFixed(1)+','+(H-padB);tl.forEach(function(e,i){a+=' L'+x(i).toFixed(1)+','+yW(e.w).toFixed(1);});a+=' L'+x(n-1).toFixed(1)+','+(H-padB)+' Z';g+='<path d="'+a+'" fill="'+css('--water')+'" opacity="0.26"/>';}
+  g+='<path d="'+pathFor('w',yW)+'" fill="none" stroke="'+wt+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
+  g+='<path d="'+pathFor('s',yS)+'" fill="none" stroke="'+st+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>';
+  tl.forEach(function(e,i){
+    if(num(e.w))g+='<circle cx="'+x(i).toFixed(1)+'" cy="'+yW(e.w).toFixed(1)+'" r="2.6" fill="#fff" stroke="'+wt+'" stroke-width="1.6"/>';
+    if(num(e.s))g+='<circle cx="'+x(i).toFixed(1)+'" cy="'+yS(e.s).toFixed(1)+'" r="2.6" fill="#fff" stroke="'+st+'" stroke-width="1.6"/>';
+  });
+  tl.forEach(function(e,i){var show=n<=8||((n-1-i)%2===0);if(show)g+='<text x="'+x(i).toFixed(1)+'" y="'+(H-7)+'" text-anchor="middle" font-size="9" fill="'+l2+'" font-family="'+sf+'">'+e.day+'</text>';});
+  return '<svg viewBox="0 0 300 180" width="100%">'+g+'</svg>';
+}
+
+function renderHealth(){
+  var tk=todayKey(),td=health[tk]||{};
+  var keys=Object.keys(health).filter(function(k){return num(health[k].w)||num(health[k].s);}).sort();
+  var recent=keys.slice(-14);
+  var tl=recent.map(function(k){return {w:health[k].w,s:health[k].s,day:parseInt(k.slice(8,10),10)};});
+  var wAvg=avg(tl.filter(function(e){return num(e.w);}).map(function(e){return e.w;}));
+  var sAvg=avg(tl.filter(function(e){return num(e.s);}).map(function(e){return e.s;}));
+  var wv=num(td.w)?td.w:'',sv=num(td.s)?td.s:'';
+  var histTitle=recent.length?('Last '+recent.length+' day'+(recent.length===1?'':'s')):'History';
+  var chart=tl.length?healthChart(tl):'<div class="hempty">Log today\u2019s water and sleep to start the chart.</div>';
+  document.getElementById('healthView').innerHTML=
+    '<div class="wcard hcard"><p class="ch">Today \u00B7 '+fmtToday()+'</p>'+
+      '<div class="irow"><span class="tile" style="background:var(--water)"></span><span class="iname">Water <span class="iu">LITRES</span></span><span class="field"><input class="numfield" id="h-water" type="number" inputmode="decimal" step="any" placeholder="0" value="'+wv+'"><span class="fu">L</span></span></div>'+
+      '<div class="irow"><span class="tile" style="background:var(--sleep)"></span><span class="iname">Sleep <span class="iu">HOURS</span></span><span class="field"><input class="numfield" id="h-sleep" type="number" inputmode="decimal" step="any" placeholder="0" value="'+sv+'"><span class="fu">hr</span></span></div>'+
+    '</div>'+
+    '<div class="wcard hcard"><p class="ch">'+histTitle+'</p>'+
+      '<div class="legend"><span><i style="background:var(--water-t)"></i>Water (L)</span><span><i style="background:var(--sleep-t)"></i>Sleep (hr)</span></div>'+chart+'</div>'+
+    '<div class="metrics"><div class="metric"><div class="ml">Avg water</div><div class="mv">'+(wAvg==null?'\u2014':wAvg.toFixed(1)+' <span>L</span>')+'</div></div>'+
+      '<div class="metric"><div class="ml">Avg sleep</div><div class="mv">'+(sAvg==null?'\u2014':sAvg.toFixed(1)+' <span>hr</span>')+'</div></div></div>';
+  function save(){
+    var w=parseFloat(document.getElementById('h-water').value);
+    var s=parseFloat(document.getElementById('h-sleep').value);
+    var e={};if(isFinite(w))e.w=w;if(isFinite(s))e.s=s;
+    if(Object.keys(e).length)health[tk]=e;else delete health[tk];
+    store.set('tp.health',health);renderHealth();
+  }
+  document.getElementById('h-water').addEventListener('change',save);
+  document.getElementById('h-sleep').addEventListener('change',save);
+}
+function applyMode(){segEl.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.mode===mode);});document.getElementById('view-program').hidden=mode!=='program';document.getElementById('view-travel').hidden=mode!=='travel';document.getElementById('view-health').hidden=mode!=='health';document.getElementById('extra').hidden=mode!=='program';}
 segEl.querySelectorAll('button').forEach(function(b){b.onclick=function(){mode=b.dataset.mode;applyMode();};});
 
-applyMode();renderNav();renderWorkout();renderTravel();
+applyMode();renderNav();renderWorkout();renderTravel();renderHealth();
 </script>
 </body>
 </html>
