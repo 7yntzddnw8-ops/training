@@ -42,7 +42,7 @@
   .prog-wrap{padding:16px 16px 2px}
   .prog-h{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--label2);margin:0 0 8px}
   .prog-h b{color:var(--label);font-weight:600;font-variant-numeric:tabular-nums}
-  .pbar{position:relative;height:10px;border-radius:6px;overflow:hidden;background:linear-gradient(90deg,var(--c1) 0,var(--c1) 25%,var(--c2) 25%,var(--c2) 50%,var(--c3) 50%,var(--c3) 75%,var(--c4) 75%,var(--c4) 100%)}
+  .pbar{position:relative;height:10px;border-radius:6px;overflow:hidden;background:linear-gradient(90deg,var(--c1) 0,var(--c1) 33.3%,var(--c2) 33.3%,var(--c2) 66.6%,var(--c4) 66.6%,var(--c4) 100%)}
   .pmask{position:absolute;top:0;right:0;bottom:0;background:var(--track);transition:width .3s ease}
 
   .wklab{font-size:12px;font-weight:600;color:var(--label2);text-transform:uppercase;letter-spacing:.06em;padding:18px 16px 8px}
@@ -69,6 +69,7 @@
   main{padding:16px}
   .wcard{background:var(--card);border:1px solid var(--sep);border-radius:18px;padding:15px 15px 6px}
   .wcard.done{background:var(--green-bg);border-color:var(--green-bd)}
+  .wcard + .wcard{margin-top:14px}
   .whead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:3px}
   .whead .t{font-size:21px;font-weight:700;letter-spacing:-.01em}
   .whead .s{font-size:12.5px;color:var(--label2);margin-top:4px;font-variant-numeric:tabular-nums}
@@ -103,6 +104,8 @@
 
   .note{margin-top:14px;padding:14px 15px;background:var(--card);border:1px solid var(--sep);border-radius:14px;font-size:13px;color:var(--label2);line-height:1.5}
   .note b{color:var(--label)}
+  .trav-h{font-size:12px;font-weight:600;color:var(--label2);text-transform:uppercase;letter-spacing:.06em;margin:6px 2px 8px}
+  .trav-h:not(:first-child){margin-top:22px}
   .foot{margin:22px 4px 0;font-size:11.5px;color:var(--label3);line-height:1.5;text-align:center}
   .hcard{margin-bottom:14px}
   .ch{font-size:12px;font-weight:600;color:var(--label2);text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px}
@@ -137,7 +140,7 @@
 
 <section id="view-program">
   <div class="prog-wrap">
-    <div class="prog-h"><span>Program progress</span><b id="progPct">0% &middot; 0/60</b></div>
+    <div class="prog-h"><span>Program progress</span><b id="progPct">0% &middot; 0/120</b></div>
     <div class="pbar"><div class="pmask" id="progMask"></div></div>
   </div>
   <div class="wklab">Week</div>
@@ -149,7 +152,6 @@
 <section id="view-travel" hidden>
   <main>
     <div id="travelCards"></div>
-    <div class="note"><b>Pull is the honest limit with zero kit.</b> Without a bar or rings, true pull progress stalls — table rows keep the pattern alive (lie under a sturdy desk, grip the edge, pull your chest up). If the gym has a bar, use that week's Day-2 / Day-4 pulls instead. Otherwise this is maintenance; real pull gains happen back home on rings.</div>
   </main>
 </section>
 
@@ -161,80 +163,110 @@
   <details class="info">
     <summary>How a session runs <span class="chev">&#9662;</span></summary>
     <div class="info-body">
-      <p><b>16 min EMOM — 4 rounds, one minute each: Push &#8594; Legs &#8594; Pull &#8594; Core.</b> On the minute, do the listed work, then rest the rest of the minute. Every exercise lands four times across the 16 min. Keep 2&#8211;3 reps in reserve.</p>
-      <p><span class="mono">3&#215;10s</span> = three holds inside the minute. <span class="mono">45s</span> = accumulate across the minute.</p>
+      <p><b>16 min per session — four 4-minute EMOM blocks, one exercise each.</b> On the minute, do the listed work, then rest the rest of the minute. Each exercise lands four times across its block. Keep 2&#8211;3 reps in reserve.</p>
+      <p><span class="mono">12s</span> = hold that long each minute. <span class="mono">/side</span> or <span class="mono">/leg</span> = per side.</p>
       <p><b>Cardio first, every day</b> — pick by time / space / weather: a <b>3&#8211;5K run</b> or <b>10 min HIIT jump-rope</b>.</p>
-      <p><b>Tap any line to check it off.</b> The card turns green when all five are done, and the day tab gets a tick. Progress is saved on this device. Travel workouts are reference only.</p>
-      <p><b>Weeks follow the calendar.</b> Week 1 begins 22 Jun 2026; the app opens on the current week automatically. Days (1&#8211;5) go on whichever working days the week allows.</p>
+      <p><b>Tap any line to check it off.</b> The card turns green when all five are done (cardio + four exercises), and the day tab gets a tick. Progress is saved on this device. Travel workouts are reference only.</p>
+      <p><b>Six months, three levels.</b> Week 1 begins 22 Jun 2026. Each 2-month block is one level — Level 1 (wk 1&#8211;8), Level 2 (wk 9&#8211;16), Level 3 (wk 17&#8211;24). Days are <b>Push, Pull, Legs, Core, Full</b>; workouts <b>A and B alternate each week</b>.</p>
     </div>
   </details>
-  <div class="foot">Difficulty steps up each cycle; reps step up each week. Don't chase the next progression until the current one is clean. Deload whenever you need it — a missed day beats a tweaked shoulder.</div>
+  <div class="foot">Difficulty steps up each block; reps step up across the weeks. Don't chase the next progression until the current one is clean. Deload whenever you need it — a missed day beats a tweaked shoulder.</div>
 </main>
 
 <script>
-const START = new Date(2026, 5, 22);   /* Week 1 = 22 Jun 2026 — edit to shift all 12 weeks */
+const START = new Date(2026, 5, 22);   /* Week 1 = 22 Jun 2026 — edit to shift all 24 weeks */
 
-const days = {
-  1:{ title:'Handstand', cycles:[
-    {P:['Wall walking',['30s','40s','45s']], L:['Assisted pistol squat',['5/leg','6/leg','8/leg']], U:['Pull-ups',['6','7','8']], C:['Hollow body hold',['25s','30s','35s']]},
-    {P:['Wall handstand + heel pulls',['45s','55s','60s']], L:['Box pistol (low box)',['6/leg','8/leg','10/leg']], U:['Pull-ups',['8','9','10']], C:['Leg kicks',['25s ~ 20 kicks','25s ~ 20 kicks','25s ~ 20 kicks']]},
-    {P:['Freestanding HS kick-up + hold',['45s','60s','75s']], L:['Full pistol squat',['4/leg','5/leg','6/leg']], U:['Weighted pull-ups',['5','6','8']], C:['Hollow + slow leg lowers',['10','12','15']]},
-    {P:['Freestanding handstand hold',['45s','60s','75s']], L:['Deficit pistol squat',['5/leg','6/leg','8/leg']], U:['Weighted pull-ups',['6','8','10']], C:['Front-lever leg lowers',['5','6','8']]},
-  ]},
-  2:{ title:'Front Lever', cycles:[
-    {P:['Parallel-bar / ring dips',['8','10','12']], L:['Bulgarian split squat',['8/leg','10/leg','12/leg']], U:['Tuck front-lever hold',['3\u00D78s','3\u00D710s','3\u00D712s']], C:['Lying straight leg raises',['10','12','15']]},
-    {P:['Ring dips',['6','8','10']], L:['Bulgarian split squat (3s down)',['10/leg','12/leg','14/leg']], U:['Adv-tuck front-lever hold',['3\u00D78s','3\u00D710s','3\u00D712s']], C:['Hanging knee raises',['10','12','15']]},
-    {P:['Ring dips + RTO hold',['8','10','12']], L:['Bulgarian split squat (weighted)',['10/leg','12/leg','14/leg']], U:['Single-leg front-lever hold',['3\u00D76s','3\u00D78s','3\u00D710s']], C:['Hanging straight leg raises',['8','10','12']]},
-    {P:['Ring dips (RTO support)',['6','8','10']], L:['Shrimp squat',['4/leg','5/leg','6/leg']], U:['Straddle front-lever hold',['3\u00D76s','3\u00D78s','3\u00D710s']], C:['Toes-to-bar',['8','10','12']]},
-  ]},
-  3:{ title:'Planche', cycles:[
-    {P:['Planche lean (PB / floor)',['3\u00D710s','3\u00D712s','3\u00D715s']], L:['Assisted pistol squat',['5/leg','6/leg','8/leg']], U:['Chin-ups',['6','7','8']], C:['Tuck L-sit hold',['3\u00D710s','3\u00D712s','3\u00D715s']]},
-    {P:['Tuck planche hold',['3\u00D78s','3\u00D710s','3\u00D712s']], L:['Box pistol (low box)',['6/leg','8/leg','10/leg']], U:['Archer pull-ups',['6','8','10']], C:['One-leg L-sit hold',['3\u00D78s','3\u00D710s','3\u00D712s']]},
-    {P:['Adv-tuck planche hold',['3\u00D78s','3\u00D710s','3\u00D712s']], L:['Full pistol squat',['4/leg','5/leg','6/leg']], U:['Pull-ups',['8','10','12']], C:['Full L-sit hold',['3\u00D78s','3\u00D710s','3\u00D712s']]},
-    {P:['Straddle planche lean / adv-tuck',['3\u00D710s','3\u00D712s','3\u00D715s']], L:['Deficit pistol squat',['5/leg','6/leg','8/leg']], U:['Archer pull-ups',['4/side','5/side','6/side']], C:['L-sit \u2192 V-sit raise',['3\u00D78s','3\u00D710s','3\u00D712s']]},
-  ]},
-  4:{ title:'Muscle-Up', cycles:[
-    {P:['Pike push-ups',['6','8','10']], L:['Reverse lunge',['8/leg','10/leg','12/leg']], U:['High pull-ups',['5','6','8']], C:['Hanging knee raises',['10','12','15']]},
-    {P:['Feet-elevated pike push-ups',['6','8','10']], L:['Walking lunge',['10/leg','12/leg','14/leg']], U:['Explosive / band-assisted muscle-up',['4','5','6']], C:['Hanging straight leg raises',['8','10','12']]},
-    {P:['Wall HSPU (partial ROM)',['4','5','6']], L:['Jumping lunge',['10/leg','12/leg','14/leg']], U:['Russian dips / low-ring MU attempts',['3','4','5']], C:['Windshield wipers',['6','8','10']]},
-    {P:['Wall HSPU (full ROM)',['5','6','8']], L:['High step-up (weighted opt.)',['8/leg','10/leg','12/leg']], U:['Muscle-ups (quality singles)',['2','3','4']], C:['Toes-to-bar',['8','10','12']]},
-  ]},
-  5:{ title:'Volume', cycles:[
-    {P:['Ring push-ups',['20','22','25']], L:['Cossack squat',['8/leg','10/leg','12/leg']], U:['Tuck front-lever rows',['6','8','10']], C:['Kneeling roll-outs',['15','18','20']]},
-    {P:['Decline / diamond push-ups',['15','18','20']], L:['Assisted pistol squat',['6/leg','8/leg','10/leg']], U:['Adv-tuck front-lever rows',['6','8','10']], C:['Walking roll-outs',['12','15','18']]},
-    {P:['Archer push-ups',['6/side','8/side','10/side']], L:['Full pistol squat',['4/leg','5/leg','6/leg']], U:['Feet-raised inverted rows + FL raises',['8','10','12']], C:['Toes-to-bar',['12','14','15']]},
-    {P:['Pseudo-planche push-ups',['8','10','12']], L:['Shrimp squat',['4/leg','5/leg','6/leg']], U:['Straddle FL rows / FL raises',['5','6','8']], C:['Dragon flag (negatives \u2192 full)',['5','6','8']]},
-  ]},
+/* ---- THE 4x4 PROGRAM ----
+   PROG[category][level].A / .B = the workout's 4 EMOM exercises, each [name,[wk-ramp x4]].
+   24 weeks = 3 levels (2-month blocks of 8 weeks). Within a block, workouts A and B
+   alternate each week (wk1=A, wk2=B, ...). The 4 rep values ramp across the 4 times
+   that workout is hit in the block. */
+const PROG = {
+  P:{ /* PUSH */
+    1:{ A:[['Archer push-ups',['3/side','4/side','4/side','5/side']],['Ring dips',['5','5','6','6']],['Wall walks (feet low)',['3','3','4','4']],['Ring tricep extensions',['10','11','12','12']]],
+        B:[['Full ring push-ups',['8','9','10','10']],['Bent-arm ring flys',['8','9','10','10']],['Tuck planche hold',['10s','12s','14s','15s']],['Wall handstand hold',['20s','25s','28s','30s']]] },
+    2:{ A:[['Assisted one-arm push-ups',['3/side','3/side','4/side','4/side']],['Deep / wide ring dips',['5','5','6','6']],['Wall walks (feet high)',['3','3','4','4']],['Bent-arm flys (rings low)',['6','7','8','8']]],
+        B:[['Archer ring push-ups',['3/side','3/side','4/side','4/side']],['Back-to-wall HSPU',['3','3','4','4']],['Adv-tuck planche hold',['8s','9s','10s','12s']],['Press-to-HS drills',['40s','40s','45s','45s']]] },
+    3:{ A:[['One-arm push-ups',['2/side','2/side','3/side','3/side']],['One-arm ring push-ups',['2/side','2/side','3/side','3/side']],['Freestanding HSPU',['2','3','3','4']],['Weighted ring dips',['4','4','5','5']]],
+        B:[['Straddle → full planche hold',['5s','6s','8s','10s']],['Straight-arm ring flys',['6','7','8','8']],['Press to handstand',['2','2','3','4']],['Advanced HSPU (deep/90/ring)',['2','3','3','4']]] },
+  },
+  U:{ /* PULL */
+    1:{ A:[['Full pull-ups',['4','4','5','5']],['Bodyweight rows',['8','9','10','10']],['Ring bicep curls (high)',['8','9','10','10']],['Tuck front-lever hold',['8s','10s','11s','12s']]],
+        B:[['Pull-ups (tempo)',['4','5','5','5']],['Single-side rows',['4/side','4/side','5/side','5/side']],['False-grip hang',['15s','17s','19s','20s']],['Tuck front-lever hold',['8s','10s','11s','12s']]] },
+    2:{ A:[['High pull-ups (chest-to-bar)',['3','3','4','4']],['Archer rows',['3/side','3/side','4/side','4/side']],['High false-grip pulls',['4','4','5','5']],['Adv-tuck front-lever hold',['8s','8s','9s','10s']]],
+        B:[['Archer pull-ups',['3/side','3/side','4/side','4/side']],['Explosive pull-ups',['3','3','4','4']],['Toes-to-bar → hips-to-bar',['4','5','5','6']],['Muscle-up transitions',['3','3','4','4']]] },
+    3:{ A:[['One-arm pull-ups (assisted)',['2/side','2/side','3/side','3/side']],['One-arm rows',['2/side','2/side','3/side','3/side']],['Slow muscle-up',['2','2','3','3']],['Open-half → straddle FL hold',['5s','6s','7s','8s']]],
+        B:[['Muscle-ups (kipping → strict)',['2','2','3','3']],['Archer pull-ups (loaded)',['3/side','3/side','4/side','4/side']],['Straddle → full front-lever hold',['5s','5s','6s','6s']],['Ring bicep curls (low/hard)',['8','9','10','10']]] },
+  },
+  L:{ /* LEGS */
+    1:{ A:[['Air squats',['18','20','22','25']],['Assisted pistol squats',['4/leg','4/leg','5/leg','5/leg']],['Partial sissy squats',['6','7','8','8']],['Ring leg curls (feet fwd)',['8','9','10','10']]],
+        B:[['Partial-ROM pistols',['4/leg','4/leg','5/leg','5/leg']],['Jump squats',['15','16','18','20']],['Partial sissy squats',['6','7','8','8']],['Ring leg curls (feet fwd)',['8','9','10','10']]] },
+    2:{ A:[['Full pistol squats',['4/leg','4/leg','5/leg','5/leg']],['Full sissy squats',['8','9','10','10']],['Ring leg curls (feet back)',['6','6','7','8']],['Jump squats (height)',['12','13','14','15']]],
+        B:[['Pistol squats (tempo)',['4/leg','4/leg','4/leg','5/leg']],['Sissy squats (deeper)',['8','9','10','10']],['Ring / Nordic curls',['5','5','6','6']],['Jumping pistol attempts',['3/leg','3/leg','4/leg','4/leg']]] },
+    3:{ A:[['Weighted pistol squats',['4/leg','4/leg','5/leg','5/leg']],['Explosive / jumping pistols',['3/leg','3/leg','4/leg','4/leg']],['One-leg ring curl',['4/leg','5/leg','5/leg','6/leg']],['Full sissy squats (slow)',['8','9','10','10']]],
+        B:[['Jumping pistols',['3/leg','3/leg','4/leg','4/leg']],['Nordic curls (further back)',['5','5','6','6']],['Sissy squats (weighted)',['8','9','10','10']],['Jump squats (max height)',['12','13','14','15']]] },
+  },
+  C:{ /* CORE */
+    1:{ A:[['Hanging knee raises',['8','9','10','10']],['Standing ab walkout (half)',['5','5','6','6']],['Reverse leg ext (knees closed)',['10','11','12','12']],['Partial ab roll-out',['6','7','8','8']]],
+        B:[['Hanging knee raises (full)',['8','9','10','10']],['Tuck dragon flag',['5','5','6','6']],['Reverse leg ext (knees closed)',['10','11','12','12']],['Standing walkout (further)',['5','5','6','6']]] },
+    2:{ A:[['Straight-leg raises',['6','7','8','8']],['Near-floor ab walkout',['4','4','5','5']],['Reverse leg ext (straight)',['10','11','12','12']],['Full ab roll-out',['6','7','8','8']]],
+        B:[['Toes-to-bar',['5','5','6','6']],['Straddle dragon flag',['4','4','5','5']],['Ring slide-outs',['6','7','8','8']],['Reverse leg ext (straight legs)',['10','11','12','12']]] },
+    3:{ A:[['Hips-to-bar (explosive)',['4','5','5','6']],['Full dragon flag',['4','4','5','5']],['Reverse leg ext (ribs on edge)',['8','9','10','10']],['Assisted maltese press',['4','4','5','5']]],
+        B:[['Toes-to-bar (slow)',['5','5','5','6']],['Full dragon flag (negatives)',['4','4','4','5']],['Assisted maltese press',['4','4','5','5']],['Full roll-out / slide-out',['6','7','8','8']]] },
+  },
 };
-const travel = [
-  {n:'A', t:'Floor & Door', P:['Push-ups','20\u201325'], L:['Box / assisted pistol','6\u20138/leg'], U:['Table rows (under desk)','10\u201312'], C:['Hollow body hold','30\u201340s']},
-  {n:'B', t:'Incline', P:['Pike / decline push-ups','10\u201315'], L:['Bulgarian split squat','10\u201312/leg'], U:['Towel rows on door + table rows','10\u201312'], C:['Lying straight leg raises','12\u201315']},
-  {n:'C', t:'Unilateral', P:['Archer / pseudo-planche push-ups','8\u201312'], L:['Shrimp / full pistol','5\u20136/leg'], U:['Table rows + reverse snow-angels','12 + 15'], C:['Planche tucks','3\u00D710s']},
+
+/* TRAVEL — no-equipment workouts, listed in the Travel tab. */
+const TRAVEL = [
+  {cat:'P',lvl:1,ex:[['Archer push-ups','4–5/side'],['Wall walks (feet low)','3–4'],['Diamond / close push-ups','10–12'],['Tuck planche hold (floor)','10–15s']]},
+  {cat:'P',lvl:2,ex:[['Assisted one-arm push-ups','3–4/side'],['Wall walks (feet high)','3–4'],['Pseudo-planche push-ups','6–8'],['Adv-tuck planche hold','8–12s']]},
+  {cat:'P',lvl:3,ex:[['One-arm push-ups','2–3/side'],['Freestanding / wall HSPU','2–4'],['Straddle → full planche hold','5–10s'],['Press to handstand (floor)','2–4']]},
+  {cat:'U',lvl:1,ex:[['Under-table rows (feet fwd)','8–10'],['Single-arm table rows','4–5/side'],['Reverse snow angels','10–12'],['Superman / back-ext hold','15–20s']]},
+  {cat:'U',lvl:2,ex:[['Under-table rows (back low)','8–10'],['Archer table rows','3–4/side'],['Reverse snow angels (paused)','10'],['Superman dynamic raises','12']]},
+  {cat:'U',lvl:3,ex:[['One-arm table rows','2–3/side'],['Feet-elevated table rows','8'],['Reverse snow angels (slow)','12'],['Superman + back-ext combo','12']]},
+  {cat:'L',lvl:1,ex:[['Air squats','20'],['Assisted pistols','4–5/leg'],['Partial sissy squats','6–8'],['Single-leg glute bridges','8–10/leg']]},
+  {cat:'L',lvl:2,ex:[['Full pistol squats','4–5/leg'],['Full sissy squats','8–10'],['Nordic curls (under bed)','5–6'],['Jump squats','15']]},
+  {cat:'L',lvl:3,ex:[['Jumping pistols','3/leg'],['Slow-tempo pistols','5/leg'],['Nordic curls (anchored)','6'],['Sissy squats (deep / slow)','10']]},
+  {cat:'C',lvl:1,ex:[['Lying leg raises','10–12'],['Standing ab walkout (half)','5–6'],['Reverse leg ext (knees closed)','10–12'],['Plank walk-outs','6–8']]},
+  {cat:'C',lvl:2,ex:[['Lying straight-leg raises','8–10'],['Near-floor ab walkout','4–5'],['Tuck / straddle dragon flag','5'],['Reverse leg ext (straight)','10']]},
+  {cat:'C',lvl:3,ex:[['Standing ab walkout (near-floor)','5'],['Full dragon flag','4–5'],['Reverse leg ext (ribs on edge)','8–10'],['Hollow-body V-ups','10']]},
 ];
 
 const CARDIO_NAME='Run / Rope';
-const CYC=[{n:'Foundation',v:'--c1'},{n:'Build',v:'--c2'},{n:'Intensify',v:'--c3'},{n:'Peak',v:'--c4'}];
-const PHASE=['Base','Build','Peak'];
-const CATS=['P','L','U','C'];
+const LVLCOL=['--c1','--c2','--c4'];
+const CATNAME={P:'Push',U:'Pull',L:'Legs',C:'Core'};
+const dayMeta={1:{t:'Push',type:'cat',cat:'P'},2:{t:'Pull',type:'cat',cat:'U'},3:{t:'Legs',type:'cat',cat:'L'},4:{t:'Core',type:'cat',cat:'C'},5:{t:'Full Body',type:'full'}};
 const CATMETA={K:{c:'cardio',l:'CARDIO'},P:{c:'push',l:'PUSH'},L:{c:'legs',l:'LEGS'},U:{c:'pull',l:'PULL'},C:{c:'core',l:'CORE'}};
-const ALLKEYS=['K','P','L','U','C'];
+const ALLKEYS=['K','x0','x1','x2','x3'];
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function weekStart(n){const d=new Date(START);d.setDate(d.getDate()+(n-1)*7);return d;}
 function weekEnd(n){const d=weekStart(n);d.setDate(d.getDate()+6);return d;}
 function fmt(d){return d.getDate()+' '+MON[d.getMonth()];}
-function range(n){const a=weekStart(n),b=weekEnd(n);return a.getMonth()===b.getMonth()?a.getDate()+'\u2013'+b.getDate()+' '+MON[a.getMonth()]:fmt(a)+' \u2013 '+fmt(b);}
-function currentWeek(){const t=new Date();t.setHours(0,0,0,0);const s=new Date(START);s.setHours(0,0,0,0);return Math.min(12,Math.max(1,Math.floor((t-s)/86400000/7)+1));}
+function range(n){const a=weekStart(n),b=weekEnd(n);return a.getMonth()===b.getMonth()?a.getDate()+'–'+b.getDate()+' '+MON[a.getMonth()]:fmt(a)+' – '+fmt(b);}
+function currentWeek(){const t=new Date();t.setHours(0,0,0,0);const s=new Date(START);s.setHours(0,0,0,0);return Math.min(24,Math.max(1,Math.floor((t-s)/86400000/7)+1));}
+
+function getSession(d,w){
+  const li=Math.floor((w-1)/8), lvl=li+1, wb=(w-1)%8, v=(wb%2===0)?'A':'B', rs=Math.floor(wb/2);
+  const dm=dayMeta[d]; let items=[];
+  if(dm.type==='cat'){
+    items=PROG[dm.cat][lvl][v].map(function(e){return {cat:dm.cat,name:e[0],reps:e[1][rs]};});
+  }else{
+    const pick=[['P',0],['U',0],['L',1],['C',1]];
+    items=pick.map(function(p){var e=PROG[p[0]][lvl][v][p[1]];return {cat:p[0],name:e[0],reps:e[1][rs]};});
+  }
+  return {title:dm.t, capLabel:'Level '+lvl+' · '+v+' · Wk '+(wb+1), capColor:LVLCOL[li], items:items};
+}
 
 const store={get:function(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 let mode='program', week=currentWeek(), day=1, done=store.get('tp.done',{});
 let health=store.get('tp.health',{});
 
 const weeksEl=document.getElementById('weeks');
-for(let w=1;w<=12;w++){
-  const cyc=Math.floor((w-1)/3);
+for(let w=1;w<=24;w++){
+  const li=Math.floor((w-1)/8);
   const b=document.createElement('button');
-  b.className='wk';b.dataset.w=w;b.style.setProperty('--cyc','var('+CYC[cyc].v+')');
+  b.className='wk';b.dataset.w=w;b.style.setProperty('--cyc','var('+LVLCOL[li]+')');
   b.innerHTML='<span class="n">'+w+'</span><span class="d">'+fmt(weekStart(w))+'</span><span class="dot"></span>';
   b.onclick=function(){week=w;renderNav();renderWorkout();};
   weeksEl.appendChild(b);
@@ -243,27 +275,27 @@ const dayTabsEl=document.getElementById('dayTabs');
 for(let d=1;d<=5;d++){
   const b=document.createElement('button');
   b.className='dtab';b.dataset.d=d;
-  b.innerHTML='<span class="dn">Day '+d+'</span><span class="dl">'+days[d].title+'</span>';
+  b.innerHTML='<span class="dn">Day '+d+'</span><span class="dl">'+dayMeta[d].t+'</span>';
   b.onclick=function(){day=d;renderNav();renderWorkout();};
   dayTabsEl.appendChild(b);
 }
 function dayComplete(w,d){const s=done[w+'-'+d]||{};return ALLKEYS.every(function(k){return s[k];});}
 function markDayTabs(){document.querySelectorAll('.dtab').forEach(function(el){el.classList.toggle('fin',dayComplete(week,+el.dataset.d));});}
-function renderProgress(){let c=0;for(let w=1;w<=12;w++)for(let d=1;d<=5;d++)if(dayComplete(w,d))c++;const pct=Math.round(c/60*100);const m=document.getElementById('progMask');if(m)m.style.width=(100-c/60*100)+'%';const l=document.getElementById('progPct');if(l)l.innerHTML=pct+'% &middot; '+c+'/60';}
+function renderProgress(){let c=0;for(let w=1;w<=24;w++)for(let d=1;d<=5;d++)if(dayComplete(w,d))c++;const pct=Math.round(c/120*100);const m=document.getElementById('progMask');if(m)m.style.width=(100-c/120*100)+'%';const l=document.getElementById('progPct');if(l)l.innerHTML=pct+'% &middot; '+c+'/120';}
 function renderNav(){
   document.querySelectorAll('.wk').forEach(function(el){const on=+el.dataset.w===week;el.classList.toggle('sel',on);if(on)requestAnimationFrame(function(){el.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});});});
   document.querySelectorAll('.dtab').forEach(function(el){el.classList.toggle('sel',+el.dataset.d===day);});
   markDayTabs();
 }
 
-function row(k,name,reps,isDone,small){const m=CATMETA[k];
-  return '<button class="row '+(isDone?'done':'')+'" data-cat="'+k+'">'+
+function row(stateKey,catKey,name,reps,isDone,small){const m=CATMETA[catKey];
+  return '<button class="row '+(isDone?'done':'')+'" data-cat="'+stateKey+'">'+
     '<span class="tile" style="background:var(--'+m.c+')"></span>'+
     '<span class="rmid"><span class="nm">'+name+'</span><span class="ct" style="color:var(--'+m.c+'-t)">'+m.l+'</span></span>'+
     '<span class="reps'+(small?' sm':'')+'">'+reps+'</span>'+
-    '<span class="chk'+(isDone?' on':'')+'">\u2713</span></button>';
+    '<span class="chk'+(isDone?' on':'')+'">✓</span></button>';
 }
-function srow(k,name,reps,small){const m=CATMETA[k];
+function srow(catKey,name,reps,small){const m=CATMETA[catKey];
   return '<div class="row static">'+
     '<span class="tile" style="background:var(--'+m.c+')"></span>'+
     '<span class="rmid"><span class="nm">'+name+'</span><span class="ct" style="color:var(--'+m.c+'-t)">'+m.l+'</span></span>'+
@@ -271,17 +303,16 @@ function srow(k,name,reps,small){const m=CATMETA[k];
 }
 
 function renderWorkout(){
-  const cyc=Math.floor((week-1)/3), wic=(week-1)%3;
-  const src=days[day].cycles[cyc];
+  const s=getSession(day,week);
   const key=week+'-'+day, state=done[key]||{};
-  let rows=row('K',CARDIO_NAME,'choose',!!state.K,true);
-  CATS.forEach(function(k){rows+=row(k,src[k][0],src[k][1][wic],!!state[k],false);});
+  let rows=row('K','K',CARDIO_NAME,'choose',!!state.K,true);
+  s.items.forEach(function(it,i){rows+=row('x'+i,it.cat,it.name,it.reps,!!state['x'+i],false);});
   const dc=ALLKEYS.filter(function(k){return state[k];}).length, complete=dc===5;
   document.getElementById('workout').innerHTML=
     '<div class="wcard '+(complete?'done':'')+'">'+
-      '<div class="whead"><div><div class="t">'+days[day].title+'</div><div class="s">Week '+week+' \u00B7 '+range(week)+'</div></div>'+
-      (complete?'<span class="cap-pill" style="background:var(--green)">\u2713 Done</span>':'<span class="cap-pill" style="background:var('+CYC[cyc].v+')">Cycle '+(cyc+1)+' \u00B7 '+PHASE[wic]+'</span>')+'</div>'+
-      '<div class="pline"><span class="'+(complete?'ok':'')+'">'+(complete?'\u2713 Session complete':dc+'/5 done')+'</span><button class="rst" id="reset">Reset day</button></div>'+
+      '<div class="whead"><div><div class="t">'+s.title+'</div><div class="s">Week '+week+' · '+range(week)+'</div></div>'+
+      (complete?'<span class="cap-pill" style="background:var(--green)">✓ Done</span>':'<span class="cap-pill" style="background:var('+s.capColor+')">'+s.capLabel+'</span>')+'</div>'+
+      '<div class="pline"><span class="'+(complete?'ok':'')+'">'+(complete?'✓ Session complete':dc+'/5 done')+'</span><button class="rst" id="reset">Reset day</button></div>'+
       rows+'</div>';
   document.querySelectorAll('#workout .row').forEach(function(r){r.onclick=function(){const c=r.dataset.cat;state[c]=!state[c];done[key]=state;store.set('tp.done',done);renderWorkout();};});
   document.getElementById('reset').onclick=function(e){e.stopPropagation();done[key]={};store.set('tp.done',done);renderWorkout();};
@@ -289,11 +320,14 @@ function renderWorkout(){
 }
 
 function renderTravel(){
-  document.getElementById('travelCards').innerHTML=travel.map(function(w){
+  let html='', lastCat='';
+  TRAVEL.forEach(function(w){
+    if(w.cat!==lastCat){html+='<div class="trav-h">'+CATNAME[w.cat]+'</div>';lastCat=w.cat;}
     let rows=srow('K',CARDIO_NAME,'choose',true);
-    CATS.forEach(function(k){rows+=srow(k,w[k][0],w[k][1],false);});
-    return '<div class="wcard"><div class="whead"><div><div class="t">Workout '+w.n+'</div><div class="s">'+w.t+' \u00B7 16 min EMOM</div></div></div>'+rows+'</div>';
-  }).join('');
+    w.ex.forEach(function(e){rows+=srow(w.cat,e[0],e[1],false);});
+    html+='<div class="wcard"><div class="whead"><div><div class="t">'+CATNAME[w.cat]+' · Level '+w.lvl+'</div><div class="s">16 min EMOM · no equipment</div></div></div>'+rows+'</div>';
+  });
+  document.getElementById('travelCards').innerHTML=html;
 }
 
 const segEl=document.getElementById('seg');
@@ -337,16 +371,16 @@ function renderHealth(){
   var sAvg=avg(tl.filter(function(e){return num(e.s);}).map(function(e){return e.s;}));
   var wv=num(td.w)?td.w:'',sv=num(td.s)?td.s:'';
   var histTitle=recent.length?('Last '+recent.length+' day'+(recent.length===1?'':'s')):'History';
-  var chart=tl.length?healthChart(tl):'<div class="hempty">Log today\u2019s water and sleep to start the chart.</div>';
+  var chart=tl.length?healthChart(tl):'<div class="hempty">Log today’s water and sleep to start the chart.</div>';
   document.getElementById('healthView').innerHTML=
-    '<div class="wcard hcard"><p class="ch">Today \u00B7 '+fmtToday()+'</p>'+
+    '<div class="wcard hcard"><p class="ch">Today · '+fmtToday()+'</p>'+
       '<div class="irow"><span class="tile" style="background:var(--water)"></span><span class="iname">Water <span class="iu">LITRES</span></span><span class="field"><input class="numfield" id="h-water" type="number" inputmode="decimal" step="any" placeholder="0" value="'+wv+'"><span class="fu">L</span></span></div>'+
       '<div class="irow"><span class="tile" style="background:var(--sleep)"></span><span class="iname">Sleep <span class="iu">HOURS</span></span><span class="field"><input class="numfield" id="h-sleep" type="number" inputmode="decimal" step="any" placeholder="0" value="'+sv+'"><span class="fu">hr</span></span></div>'+
     '</div>'+
     '<div class="wcard hcard"><p class="ch">'+histTitle+'</p>'+
       '<div class="legend"><span><i style="background:var(--water-t)"></i>Water (L)</span><span><i style="background:var(--sleep-t)"></i>Sleep (hr)</span></div>'+chart+'</div>'+
-    '<div class="metrics"><div class="metric"><div class="ml">Avg water</div><div class="mv">'+(wAvg==null?'\u2014':wAvg.toFixed(1)+' <span>L</span>')+'</div></div>'+
-      '<div class="metric"><div class="ml">Avg sleep</div><div class="mv">'+(sAvg==null?'\u2014':sAvg.toFixed(1)+' <span>hr</span>')+'</div></div></div>';
+    '<div class="metrics"><div class="metric"><div class="ml">Avg water</div><div class="mv">'+(wAvg==null?'—':wAvg.toFixed(1)+' <span>L</span>')+'</div></div>'+
+      '<div class="metric"><div class="ml">Avg sleep</div><div class="mv">'+(sAvg==null?'—':sAvg.toFixed(1)+' <span>hr</span>')+'</div></div></div>';
   function save(){
     var w=parseFloat(document.getElementById('h-water').value);
     var s=parseFloat(document.getElementById('h-sleep').value);
